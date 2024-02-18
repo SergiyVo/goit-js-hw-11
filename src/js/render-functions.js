@@ -7,7 +7,7 @@ export const refs = {
     loader: document.querySelector('.loader')
 }
 
-function galleryTemplate(element) {   //Робимо розмітку забераємо з інформації яка прийшла те що нам потрібно за допомогою деструкторизації
+function galleryTemplate(element) {   //Робимо розмітку, забираємо з інформації яка прийшла те що нам потрібно за допомогою деструкторизації
     const { webformatURL, largeImageURL, tags, likes, views, comments, downloads } = element;
     return `
     <li class="gallery-item">
