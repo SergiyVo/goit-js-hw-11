@@ -1,87 +1,30 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+export function getGallery(queryName) {      // Відправляємо посильного на сервер за адресою і сервер нам сам поверне посильного з інформацією
+    const BASE_URL = 'https://pixabay.com';
+    const END_POINT = '/api/';
+    const PARAMS = new URLSearchParams({
+        key: "42112521-3ff4dfc201bab0977369cd2bc",
+        q: queryName,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: 'true',
+    });
 
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+    const url = `${BASE_URL}${END_POINT}?${PARAMS}`;
 
-const input = document.querySelector('#datetime-picker');
-const btnStart = document.querySelector('button[data-start]');
-const day = document.querySelector('span[data-days]');
-const hour = document.querySelector('span[data-hours]');
-const minute = document.querySelector('span[data-minutes]');
-const second = document.querySelector('span[data-seconds]');
-
-let userSelectedDate;
-
-btnStart.disabled = true;
-
-const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose(selectedDates) {
-    userSelectedDate = selectedDates[0]; 
-
-    if (userSelectedDate < new Date) {
-      btnStart.disabled = true;
-      iziToast.show({
-        message: 'Please, choose a date in the future!',
-        messageColor: 'white',
-        backgroundColor: 'red',
-        position: 'topRight',
-      });      
-    } else {
-      btnStart.disabled = false;
-      btnStart.classList.add('button-start-date');
-    }  
-    
-  },
-};
-
-flatpickr(input, options);
-
-function addLeadingZero(value) {
-  return value.toString().padStart(2, '0');
+    console.log(url);
+ 
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.status);
+            }
+            return response.json();
+        });
 }
 
-function tick({ days, hours, minutes, seconds }) {
-  day.textContent = `${addLeadingZero(days)}`
-  hour.textContent = `${addLeadingZero(hours)}`;
-  minute.textContent = `${addLeadingZero(minutes)}`;
-  second.textContent = `${addLeadingZero(seconds)}`;
-};
 
-function convertMs(ms) {
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-  const days = Math.floor(ms / day);
-  const hours = Math.floor((ms % day) / hour);
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
-  return { days, hours, minutes, seconds };
-}
 
-function onBtnClick() {
-  btnStart.disabled = true;
-  btnStart.classList.remove('button-start-date');
-  input.disabled = true;
 
-  let differenceTime = userSelectedDate - Date.now();
-  const intervalId = setInterval(() => { 
-    differenceTime -= 1000;
-    const timeObj = convertMs(differenceTime);
-    tick(timeObj);
-    
-    if (differenceTime <= 1000) {
-      clearInterval(intervalId);
-      input.disabled = false;
-    }
 
-  }, 1000);
-}
 
-btnStart.addEventListener('click', onBtnClick);

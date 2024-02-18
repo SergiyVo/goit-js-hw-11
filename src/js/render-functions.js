@@ -1,45 +1,48 @@
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const form = document.querySelector('.form');
+export const refs = {
+    form: document.querySelector('.form'),
+    gallery: document.querySelector('.gallery'),
+    loader: document.querySelector('.loader')
+}
 
-form.addEventListener('submit', e => {
-    e.preventDefault();
+function galleryTemplate(element) {   //Робимо розмітку забераємо з інформації яка прийшла те що нам потрібно за допомогою деструкторизації
+    const { webformatURL, largeImageURL, tags, likes, views, comments, downloads } = element;
+    return `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${largeImageURL}">
+        <img class="gallery-image" src="${webformatURL}" alt="${tags}" />
+      </a>
+      <ul class="gallery-body">
+        <li class="gallery-info">
+          <h3>Likes:</h3>
+          <p>${likes}</p>
+        </li>
+        <li class="gallery-info">
+          <h3>Views:</h3>
+          <p>${views}</p>
+        </li>
+        <li class="gallery-info">
+          <h3>Comments:</h3>
+          <p>${comments}</p>
+        </li>
+        <li class="gallery-info">
+          <h3>Downloads:</h3>
+          <p>${downloads}</p>
+        </li>
+      </ul>
+    </li>`
+ }
 
-    const delay = form.elements.delay.value.trim();
-    const state = e.target.elements.state.value;
-    
-    const promise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (state === 'fulfilled') {
-                resolve(delay);
-            } else {
-                reject(delay);
-            }
-        }, delay);
-    });
-    
-    promise.then((delay) => {
-        iziToast.show({
-            message: `✅ Fulfilled promise in ${delay}ms`,
-            messageColor: 'white',
-            backgroundColor: '#59A10D',
-            position: 'topRight',
-        });
-    }).catch((delay) => {
-        iziToast.show({
-            message: `❌ Rejected promise in ${delay}ms`,
-            messageColor: 'white',
-            backgroundColor: '#EF4040',
-            position: 'topRight',
-        });
+export function renderGallery(elements) {   // Візуалізуємо інформацію яку приніс посильний
+    const markup = elements.hits.map(element => {
+        return galleryTemplate(element)
+    }).join('\n');       
+    refs.gallery.insertAdjacentHTML('beforeend', markup);
 
-    });
-  
-    e.target.reset();
-  
+    new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
 });
-
-
-
-
+}
