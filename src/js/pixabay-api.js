@@ -2,7 +2,7 @@ export function getGallery(queryName) {      // Відправляємо пос�
     const BASE_URL = 'https://pixabay.com';
     const END_POINT = '/api/';
     const PARAMS = new URLSearchParams({
-        key: "42112521-3ff4dfc201bab0977369cd2bc",
+        key: "42413165-de21b3093ac09ea3a2837c255",
         q: queryName,
         image_type: 'photo',
         orientation: 'horizontal',
